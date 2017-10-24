@@ -9,7 +9,7 @@ pthread_t threadID[101];
 void* StringCounter(void* arg);
 
 int main(int argc, char* argv[]) {
-    FILE* source = fopen("novel.txt","r");
+    FILE* source = fopen("Novel.txt","r");
     fscanf(source,"%[^\n]%*c",globalIterator);
     for(int i=1;i<argc;i++){
         pthread_create(&threadID[i],NULL,&StringCounter,argv[i]);
