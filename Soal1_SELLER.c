@@ -7,7 +7,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 struct WeaponData{
-    int count=0;
+    int count;
     char Name[10];
 };
 int main(int argc, char *argv[]) {
@@ -23,6 +23,9 @@ int main(int argc, char *argv[]) {
     strcpy(data[3].Name,"SS2-V5");
     strcpy(data[4].Name,"SPG1-V3");
     strcpy(data[5].Name,"MINE");
+    for(int i=0;i<6;i++){
+        data[i].count=0;
+    }
     while(1){
         printf("Avaiable Query, \"BROWSE\" and \"ADD\"\n");
         scanf("%s",Query);
