@@ -37,9 +37,31 @@ int main(int argc, char *argv[]) {
 }
 
 void* Degrade(void* arg){
-   
+    int *data=(int*)arg;
+    while(1){
+        sleep(data[1]);
+        status[data[0]]-=data[2];
+        printf("Status : Lohan %d , Status Kepiting %d\n",status[LOHAN],status[KEPITING]);
+    }
 }
 
 void* DeadCheck(void* arg){
-   
+    while(1){
+        if(status[LOHAN]<=0){
+            printf("Lohan telah mati\n");
+            exit(EXIT_SUCCESS);
+        }else if(status[LOHAN]>100){
+            printf("Lohan telah meledak\n");
+            exit(EXIT_SUCCESS);
+        }
+        if(status[KEPITING]<=0){
+            printf("Kepiting telah mati\n");
+            exit(EXIT_SUCCESS);
+        }else if(status[KEPITING]>100){
+            printf("Kepiting telah meledak\n");
+            exit(EXIT_SUCCESS);
+        }
+       
+        sleep(1);
+    }
 }
