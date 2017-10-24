@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
                 }else if(strcmp(data[i].Name,Query)==0){
                     if(data[i].count>=amount){
                         data[i].count-=amount;
-                        printf("Weapon %s has been Bought %d Units!\n",data[i].Name,data[i].count);
+                        printf("Weapon %s has been Bought %d Units!\n",data[i].Name,amount);
                         
                     }else{
                         printf("Not Enough Stock!\n");
