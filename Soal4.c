@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     }
     return 0;
 }
-
+//fungsi factorial
 void* Factorial(void* arg){
     unsigned long long command = *((unsigned long long int*)arg),result=1,init;
     init = command;
