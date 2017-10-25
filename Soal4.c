@@ -6,7 +6,7 @@
 pthread_t threadID[101];
 
 void* Factorial(void* arg);
-
+//argc untuk jumlah inputan ,dan argv inputannya
 int main(int argc, char *argv[]) {
     for(int i=1;i<argc;i++){
         int stringLenght = strlen(argv[i]);
