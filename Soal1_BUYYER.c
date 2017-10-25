@@ -23,9 +23,9 @@ int main(int argc, char *argv[]) {
         scanf("%s",Query);
         if(strcmp(Query,"BROWSE")==0){
             for(int i=0;i<6;i++){
-                if(data[i].count>0){
-                    printf("%s %d\n",data[i].Name,data[i].count);
-                }
+                
+            	printf("%s %d\n",data[i].Name,data[i].count);
+                
             }
         }else if(strcmp(Query,"BUY")==0){
             scanf("%s %d",Query,&amount);
