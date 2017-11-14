@@ -25,9 +25,13 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
 {
 	char myDocPath[1000];
+	char myDownPath[1000];
 	sprintf(myDocPath,"/home/%s/Documents",username);
+	sprintf(myDownPath,"/home/%s/Downloads",username);
 	if(strcmp(myDocPath,path)==0){
 		printf("IN THE DOC! %s\n",path);
+	}else if(strcmp(myDownPath,path)==0){
+		printf("IN THE Download! %s\n",path);
 	}
 	//printf("currernt Path : %s by %s\n",myDocPath,path);
 	DIR *dp;
@@ -76,6 +80,10 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 		sprintf(tempQuery,"chmod 000 /home/%s/Documents/rahasia/%s",username,(point+10));
 		system(tempQuery);
 		return 0;
+	}else if(strstr("/Downloads")){
+		char tempQuery[1000];
+		sprintf(tempQuery,"/home/%s/Downloads/simpanan",username);
+		mkdir(tempQuery,0777);
 	}
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
@@ -99,11 +107,31 @@ static int xmp_mkdir(const char *path, mode_t mode){
 	return 0;
 }
 
+static int xmp_write(const char *path, const char *buf, size_t size,off_t offset, struct fuse_file_info *fi){
+	int fd;
+	int res;
+	(void) fi;
+
+	while((sizetemp = fread(buffer, 1, BUFSIZ, from))){
+		fwrite(buffer, 1, sizetemp, to);
+	}
+	
+	fd = open(path, O_WRONLY);
+	if (fd == -1)
+		return -errno;
+	res = pwrite(fd, buf, size, offset);
+	if (res == -1)
+		res = -errno;
+	close(fd);
+	return res;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
-	.mkdir      = xmp_mkdir
+	.mkdir      = xmp_mkdir,
+	.write 		= xmp_write
 };
 
 int main(int argc, char *argv[])
