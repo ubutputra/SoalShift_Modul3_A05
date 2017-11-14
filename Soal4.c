@@ -13,7 +13,7 @@ char *username = "rendoru";
 FILE *fin,*from,*to,*temp;
 char buffer[BUFSIZ];
 size_t sizetemp;
-
+int isFailure = 0;
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
 	int res;
@@ -84,6 +84,11 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 		system(tempQuery);
 		return 0;
 	}else if(strstr(path,"/Downloads")){
+		if(strstr(path,".copy")){
+			system("zenity --error --text=\"File yang anda buka adalah file hasil salinan. File tidak bisa diubah maupun disalin kembali!\"");
+			isFailure=1;
+			return -1;
+		}
 		char tempQuery[1000];
 		sprintf(tempQuery,"/home/%s/Downloads/simpanan",username);
 		mkdir(tempQuery,0777);
@@ -119,6 +124,10 @@ static int xmp_truncate(const char *path, off_t size){
 	return 0;
 }
 static int xmp_write(const char *path, const char *buf, size_t size,off_t offset, struct fuse_file_info *fi){
+	if(isFailure){
+		isFailure=0;
+		return 0;
+	}
 	int fd;
 	int res;
 	(void) fi;
@@ -126,7 +135,7 @@ static int xmp_write(const char *path, const char *buf, size_t size,off_t offset
 	if(strstr(path,"Downloads")){
 		char tempPath[1000];
 		char *point = strstr(path,"Downloads/");
-		sprintf(tempPath,"/home/%s/Downloads/simpanan/%s",username,(point+10));
+		sprintf(tempPath,"/home/%s/Downloads/simpanan/%s.copy",username,(point+10));
 		printf("Path write : %s\n",tempPath);	
 		fd = open(tempPath, O_WRONLY | O_CREAT);
 	}else{
