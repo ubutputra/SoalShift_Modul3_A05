@@ -11,6 +11,24 @@
 
 
 
+static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struct fuse_file_info *fi)
+{
+	int fd;
+	int res;
+
+	(void) fi;
+	fd = open(path, O_RDONLY);
+	if (fd == -1)
+		return -errno;
+
+	res = pread(fd, buf, size, offset);
+	if (res == -1)
+		res = -errno;
+
+	close(fd);
+	return res;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
