@@ -10,6 +10,9 @@
 #include <stdlib.h>
 
 char *username = "rendoru";
+FILE *fin,*from,*to,*temp;
+char buffer[BUFSIZ];
+size_t sizetemp;
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -80,7 +83,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 		sprintf(tempQuery,"chmod 000 /home/%s/Documents/rahasia/%s",username,(point+10));
 		system(tempQuery);
 		return 0;
-	}else if(strstr("/Downloads")){
+	}else if(strstr(path,"/Downloads")){
 		char tempQuery[1000];
 		sprintf(tempQuery,"/home/%s/Downloads/simpanan",username);
 		mkdir(tempQuery,0777);
@@ -116,7 +119,14 @@ static int xmp_write(const char *path, const char *buf, size_t size,off_t offset
 		fwrite(buffer, 1, sizetemp, to);
 	}
 	
-	fd = open(path, O_WRONLY);
+	if(strstr(path,"Downloads")){
+		char tempPath[1000];
+		char *point = strstr(path,"Downloads/");
+		sprintf(tempPath,"/home/%s/Downloads/simpanan/%s",username,(point+10));	
+		fd = open(tempPath, O_WRONLY);
+	}else{
+		fd = open(path, O_WRONLY);
+	}
 	if (fd == -1)
 		return -errno;
 	res = pwrite(fd, buf, size, offset);
