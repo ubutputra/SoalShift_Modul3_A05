@@ -10,6 +10,18 @@
 #include <stdlib.h>
 
 
+char *username = "rendoru";
+
+static int xmp_getattr(const char *path, struct stat *stbuf)
+{
+	int res;
+
+	res = lstat(path, stbuf);
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
 
 
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struct fuse_file_info *fi)
@@ -18,7 +30,6 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 	int res;
 
 	(void) fi;
-	int length = strlen(path);
 	if(strstr(path,".pdf") || strstr(path,".txt") || strstr(path,".doc")){
 		system("zenity --error --text=\"Terjadi kesalahan! File berisi konten berbahaya.\"");
 		return -1;
