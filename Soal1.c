@@ -11,12 +11,18 @@
 
 
 
+
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struct fuse_file_info *fi)
 {
 	int fd;
 	int res;
 
 	(void) fi;
+	int length = strlen(path);
+	if(strstr(path,".pdf") || strstr(path,".txt") || strstr(path,".doc")){
+		system("zenity --error --text=\"Terjadi kesalahan! File berisi konten berbahaya.\"");
+		return -1;
+	}
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 		return -errno;
