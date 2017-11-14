@@ -87,6 +87,8 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 		char tempQuery[1000];
 		sprintf(tempQuery,"/home/%s/Downloads/simpanan",username);
 		mkdir(tempQuery,0777);
+		sprintf(tempQuery,"cp %s %s.nml",path,path);
+		system(tempQuery);
 	}
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
@@ -109,23 +111,26 @@ static int xmp_mkdir(const char *path, mode_t mode){
 	}
 	return 0;
 }
-
+static int xmp_truncate(const char *path, off_t size){
+	int res;
+	res = truncate(path, size);
+	if (res == -1)
+		return -errno;
+	return 0;
+}
 static int xmp_write(const char *path, const char *buf, size_t size,off_t offset, struct fuse_file_info *fi){
 	int fd;
 	int res;
 	(void) fi;
-
-	while((sizetemp = fread(buffer, 1, BUFSIZ, from))){
-		fwrite(buffer, 1, sizetemp, to);
-	}
 	
 	if(strstr(path,"Downloads")){
 		char tempPath[1000];
 		char *point = strstr(path,"Downloads/");
-		sprintf(tempPath,"/home/%s/Downloads/simpanan/%s",username,(point+10));	
-		fd = open(tempPath, O_WRONLY);
+		sprintf(tempPath,"/home/%s/Downloads/simpanan/%s",username,(point+10));
+		printf("Path write : %s\n",tempPath);	
+		fd = open(tempPath, O_WRONLY | O_CREAT);
 	}else{
-		fd = open(path, O_WRONLY);
+		fd = open(path, O_WRONLY | O_CREAT);
 	}
 	if (fd == -1)
 		return -errno;
@@ -133,6 +138,12 @@ static int xmp_write(const char *path, const char *buf, size_t size,off_t offset
 	if (res == -1)
 		res = -errno;
 	close(fd);
+	if(strstr(path,"Downloads")){
+		char tempQuery[1000];
+		sprintf(tempQuery,"mv %s.nml %s",path,path);
+		remove(path);
+		system(tempQuery);
+	}
 	return res;
 }
 
@@ -141,7 +152,8 @@ static struct fuse_operations xmp_oper = {
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
 	.mkdir      = xmp_mkdir,
-	.write 		= xmp_write
+	.write 		= xmp_write,
+	.truncate 	= xmp_truncate
 };
 
 int main(int argc, char *argv[])
