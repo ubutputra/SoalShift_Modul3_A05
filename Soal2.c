@@ -66,6 +66,8 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 		char tempName[1000];
 		sprintf(tempName,"%s.ditandai",path);
 		printf("renamed TO : %s\n",tempName);
+		char tempQuery[1000];
+		sprintf(tempQuery,"/home/%s/Documents/rahasia",username);
 		rename(path,tempName);
 		return 0;
 	}
@@ -81,12 +83,21 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 	return res;
 }
 
-
+static int xmp_mkdir(const char *path, mode_t mode){
+	int res=1;
+	printf("mkdir path : %s\n",path);
+	res = mkdir(path, mode);
+	if (res == -1){
+		return -errno;
+	}
+	return 0;
+}
 
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
+	.mkdir      = xmp_mkdir
 };
 
 int main(int argc, char *argv[])
