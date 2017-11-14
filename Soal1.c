@@ -9,7 +9,6 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-
 char *username = "rendoru";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
@@ -22,7 +21,6 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 
 	return 0;
 }
-
 
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
 {
@@ -56,17 +54,20 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
 	return 0;
 }
 
-
-
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struct fuse_file_info *fi)
 {
 	int fd;
 	int res;
 
 	(void) fi;
+	
 	if(strstr(path,".pdf") || strstr(path,".txt") || strstr(path,".doc")){
 		system("zenity --error --text=\"Terjadi kesalahan! File berisi konten berbahaya.\"");
-		return -1;
+		char tempName[1000];
+		sprintf(tempName,"%s.ditandai",path);
+		printf("renamed TO : %s\n",tempName);
+		rename(path,tempName);
+		return 0;
 	}
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
@@ -79,6 +80,8 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 	close(fd);
 	return res;
 }
+
+
 
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
