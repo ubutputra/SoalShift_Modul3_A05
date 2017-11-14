@@ -69,6 +69,10 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struc
 		char tempQuery[1000];
 		sprintf(tempQuery,"/home/%s/Documents/rahasia",username);
 		rename(path,tempName);
+		mkdir(tempQuery,0777);
+		char *point = strstr(tempName,"Documents/");
+		sprintf(tempQuery,"mv %s /home/%s/Documents/rahasia/%s",tempName,username,(point+10));
+		system(tempQuery);
 		return 0;
 	}
 	fd = open(path, O_RDONLY);
